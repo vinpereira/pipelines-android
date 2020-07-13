@@ -4,7 +4,8 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 
 pool:
-  vmImage: 'macOS-10.13'
+  agent:
+    queue: 'macOs-10.03'
 
 steps:
 - task: Gradle@2
@@ -12,13 +13,10 @@ steps:
     workingDirectory: ''
     gradleWrapperFile: 'gradlew'
     gradleOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.8'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
+    publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
-    tasks: 'assembleDebug test'
-  displayName: gradlew assembleDebug test
+    tasks: 'clean, assembleDebug, lint'
+  displayName: gradlew clean, assembleDebug, lint
 
 - task: CopyFiles@2
   inputs:
@@ -29,6 +27,6 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(build.artifactStagingDirectory)'
-    artifactName: 'drop'
+    artifactName: 'outputs'
     artifactType: 'container'
   displayName: Publish artifacts
